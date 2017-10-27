@@ -1,0 +1,69 @@
+Noisemusick 64 bit Migration notes
+---------------------------------
+* Update to recommended settings in warnings tab
+
+* To Solve BAD ACCESS in ES1 Renderer: Goto Product->Scheme->Edit->Run->GPU Frame Capture Disabled (might be Xcode beta bug?)
+
+* "Duplicate symbols" generated when updating To Fix:
+
+Click on the project in the right-hand project tree
+Select the debug build target in the TARGETS list
+Click on the "Build Settings" tab
+Search for "No Common Blocks"
+Change the setting from "Yes" to "No"
+
+* Ran migration python script
+ 
+* Added core MIDI for Audiobus 3
+
+* HAd to update version and build numbers
+
+* Need to update Deployment target to 8.0 for Xcode 9
+
+* Audiobus needs libz.tbd and Security framework
+
+* If using Mic on iOS11, NSMicrophoneUsageDescription needs a string
+
+* No Audiobus URL was found in this app's Info.plist
+ABAudioSenderPort.m:203: You must declare this audio component within your Info.plist's AudioComponents list: ADD url type as described in audiobus docs
+
+* ABAudioSenderPort.m:203: You must declare this audio component within your Info.plist's AudioComponents list
+
+* Add this somewhere?
+
+-(void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag{
+  [audioPlayer stop];
+  [audioPlayer prepareToPlay];
+}
+
+OR
+
+[audioPlayer stop]; [audioPlayer prepareToPlay]; [[AVAudioSession sharedInstance] setActive:NO error:nil];
+
+* ofXPd generates audio in the audioOut callback FYI
+
+Notes on current display resolutions: 
+http://iosres.com/
+https://ivomynttinen.com/blog/ios-design-guidelines
+https://www.paintcodeapp.com/news/ultimate-guide-to-iphone-resolutions
+
+
+Error with Pd patch:
+"failed since it uses garray_getfloatarray while running 64-bit"
+Looks like it is in the vefl.h internal
+Tracked down to krzYszcz and Cyclone Max extension ports:
+https://puredata.info/downloads/cyclone/releases/0.1-alpha57
+
+Updated vefl.c and vefl.h to versions not using array of floats; anything else? 
+
+* LED used this opengl shader:
+ [LEDLayer setBlendFunc: (ccBlendFunc) { GL_ONE, GL_ONE_MINUS_SRC_COLOR }];
+ 
+ 
+* Need to set in Info.plist: App does not run in background from YES->NO
+
+* In order to pass privacy notices, had to remove the following from openframeworks tree:
+
+addons->video
+photolibrary access
+
